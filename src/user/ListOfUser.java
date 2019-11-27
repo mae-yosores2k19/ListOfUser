@@ -5,16 +5,19 @@
  */
 package user;
 
-import DB.CRUD;
+import File.Crud;
 import java.awt.Dimension;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.Statement;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
 import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.table.DefaultTableModel;
 
@@ -24,17 +27,29 @@ import javax.swing.table.DefaultTableModel;
  */
 public class ListOfUser extends javax.swing.JFrame implements ActionListener {
 
-    DefaultTableModel model = new javax.swing.table.DefaultTableModel();
+    public static DefaultTableModel model = new javax.swing.table.DefaultTableModel();
     Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
-    String email;
+    public static String email;
+    
 
     /**
      * Creates new form ListOfUser
      */
     public ListOfUser() {
         initComponents();
-
         this.setLocation(dim.width / 2 - this.getSize().width / 2, dim.height / 2 - this.getSize().height / 2);
+    }
+    
+
+    public void showListOfUser() {
+        model = (DefaultTableModel) listofuser.getModel();
+        List data = Crud.showList();
+        for (int i = 0; i < data.size(); ++i) {
+            String[] line = data.get(i).toString().split(",");
+            if (!line[1].equalsIgnoreCase("firstname")) {
+                model.addRow(new Object[]{line[1], line[2], line[3], line[4]});
+            }
+        }
     }
 
     /**
@@ -46,33 +61,20 @@ public class ListOfUser extends javax.swing.JFrame implements ActionListener {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jScrollPane1 = new javax.swing.JScrollPane();
-        jTable1 = new javax.swing.JTable();
         jPanel1 = new javax.swing.JPanel();
-        jScrollPane2 = new javax.swing.JScrollPane();
+        jScrollPane1 = new javax.swing.JScrollPane();
         listofuser = new javax.swing.JTable();
-        logout = new javax.swing.JButton();
-
-        jTable1.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null}
-            },
-            new String [] {
-                "Title 1", "Title 2", "Title 3", "Title 4"
-            }
-        ));
-        jScrollPane1.setViewportView(jTable1);
+        btnLogout = new javax.swing.JButton();
+        jLabel1 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
-        jPanel1.setBackground(new java.awt.Color(102, 102, 102));
+        jPanel1.setBackground(new java.awt.Color(51, 51, 51));
+        jPanel1.setForeground(new java.awt.Color(255, 255, 255));
 
-        listofuser.setBackground(new java.awt.Color(255, 204, 204));
-        listofuser.setFont(new java.awt.Font("Constantia", 0, 14)); // NOI18N
-        listofuser.setForeground(new java.awt.Color(255, 0, 51));
+        listofuser.setBackground(new java.awt.Color(0, 204, 204));
+        listofuser.setFont(new java.awt.Font("Georgia", 0, 14)); // NOI18N
+        listofuser.setForeground(new java.awt.Color(153, 0, 51));
         listofuser.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
 
@@ -86,16 +88,21 @@ public class ListOfUser extends javax.swing.JFrame implements ActionListener {
                 listofuserMouseClicked(evt);
             }
         });
-        jScrollPane2.setViewportView(listofuser);
+        jScrollPane1.setViewportView(listofuser);
 
-        logout.setBackground(new java.awt.Color(255, 0, 102));
-        logout.setFont(new java.awt.Font("Georgia", 1, 18)); // NOI18N
-        logout.setText("Logout");
-        logout.addMouseListener(new java.awt.event.MouseAdapter() {
+        btnLogout.setBackground(new java.awt.Color(0, 204, 204));
+        btnLogout.setFont(new java.awt.Font("Georgia", 1, 18)); // NOI18N
+        btnLogout.setText("Logout");
+        btnLogout.setActionCommand("");
+        btnLogout.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
-                logoutMouseClicked(evt);
+                btnLogoutMouseClicked(evt);
             }
         });
+
+        jLabel1.setFont(new java.awt.Font("Georgia", 1, 24)); // NOI18N
+        jLabel1.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel1.setText("List Of User:)");
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -104,28 +111,32 @@ public class ListOfUser extends javax.swing.JFrame implements ActionListener {
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addContainerGap()
-                        .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 473, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(35, 35, 35)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(jScrollPane1)
+                            .addComponent(btnLogout, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGap(207, 207, 207)
-                        .addComponent(logout)))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addGap(178, 178, 178)
+                        .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 215, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap(59, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGap(28, 28, 28)
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 23, Short.MAX_VALUE)
-                .addComponent(logout)
-                .addGap(22, 22, 22))
+                .addGap(25, 25, 25)
+                .addComponent(jLabel1)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addComponent(btnLogout, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -153,97 +164,43 @@ public class ListOfUser extends javax.swing.JFrame implements ActionListener {
 
         delete.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                CRUD c = new CRUD();
-                String query = "DELETE FROM `user` WHERE email='" + email + "'";
-                model = (DefaultTableModel) listofuser.getModel();
-                try {
-                    Connection conn = c.dbConnect();
-                    Statement st = conn.createStatement();
-                    st.executeUpdate(query);
+                boolean bool = Crud.delete(email);
+                if (bool) {
+                    model = (DefaultTableModel) listofuser.getModel();
+                    parent.setVisible(false);
+                    model.removeRow(row);
+                } else {
+                    JOptionPane.showMessageDialog(null, "emails not found!!");
 
-                } catch (Exception exe) {
-                    System.out.println("got an exception");
-                    System.out.println(exe.getMessage());
                 }
-                parent.setVisible(false);
-                model.removeRow(row);
 
             }
         });
         edit.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                CRUD c = new CRUD();
-                String query = "SELECT * FROM user where email='" + email + "'";
                 model = (DefaultTableModel) listofuser.getModel();
                 parent.setVisible(false);
-                try {
-                    Connection conn = c.dbConnect();
-                    Statement st = conn.createStatement();
-                    ResultSet rs = st.executeQuery(query);
-
-                    while (rs.next()) {
-                        String fname = rs.getString("first_name");
-                        String mname = rs.getString("middle_name");
-                        String lname = rs.getString("last_name");
-                        String email = rs.getString("email");
-                        String password = rs.getString("password");
-                        
-                        Update update = new Update();
-                        update.setVisible(true);
-                        parent.setVisible(false);
-                        jPanel1.setVisible(false);
-                        update.setFname(fname);
-                        update.setMname(mname);
-                        update.setLname(lname);
-                        update.setEmail(email);
-                        update.setPass(password);
-                        update.setRepeatpass(password);
-             
-                        
-                        
-
-                    }
-
-                } catch (Exception exe) {
-                    System.out.println("got an exception on edit button");
-                    System.out.println(exe.getMessage());
-                }
-
+                String[] data = Crud.getOne(email).split(",");
+                Update update = new Update();
+                update.setId(data[0]);
+                update.setRow(row);
+                update.setFname(data[1]);
+                update.setMname(data[2]);
+                update.setLname(data[3]);
+                update.setEmail(data[4]);
+                update.setPass(data[5]);
+                update.setRepeatpass(data[5]);
+                update.setVisible(true);
+                parent.setVisible(false);
             }
         });
     }//GEN-LAST:event_listofuserMouseClicked
 
-
-    private void logoutMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_logoutMouseClicked
+    private void btnLogoutMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnLogoutMouseClicked
         Login log = new Login();
         log.setVisible(true);
         this.setVisible(false);
-    }//GEN-LAST:event_logoutMouseClicked
-
-    public  void showListOfUser() {
-        CRUD c = new CRUD();
-        String query = "SELECT first_name,middle_name,last_name,email FROM user";
-        model = (DefaultTableModel) listofuser.getModel();
-        try {
-            Connection conn = c.dbConnect();
-            Statement st = conn.createStatement();
-            ResultSet rs = st.executeQuery(query);
-
-            while (rs.next()) {
-                String fname = rs.getString(1);
-                String mname = rs.getString(2);
-                String lname = rs.getString(3);
-                String username = rs.getString(4);
-                model.addRow(new Object[]{fname, mname, lname, username});
-
-            }
-
-        } catch (Exception e) {
-            System.out.println("got an exception");
-            System.out.println(e.getMessage());
-        }
-
-    }
+    }//GEN-LAST:event_btnLogoutMouseClicked
 
     /**
      * @param args the command line arguments
@@ -259,16 +216,24 @@ public class ListOfUser extends javax.swing.JFrame implements ActionListener {
                 if ("Nimbus".equals(info.getName())) {
                     javax.swing.UIManager.setLookAndFeel(info.getClassName());
                     break;
+
                 }
             }
         } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(ListOfUser.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(ListOfUser.class
+                    .getName()).log(java.util.logging.Level.SEVERE, null, ex);
+
         } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(ListOfUser.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(ListOfUser.class
+                    .getName()).log(java.util.logging.Level.SEVERE, null, ex);
+
         } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(ListOfUser.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(ListOfUser.class
+                    .getName()).log(java.util.logging.Level.SEVERE, null, ex);
+
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(ListOfUser.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(ListOfUser.class
+                    .getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
         //</editor-fold>
 
@@ -281,15 +246,12 @@ public class ListOfUser extends javax.swing.JFrame implements ActionListener {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btnLogout;
+    private javax.swing.JLabel jLabel1;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JScrollPane jScrollPane2;
-    private javax.swing.JTable jTable1;
     private javax.swing.JTable listofuser;
-    private javax.swing.JButton logout;
     // End of variables declaration//GEN-END:variables
-
-    private javax.swing.JTextField Fname;
 
     @Override
     public void actionPerformed(ActionEvent e) {
